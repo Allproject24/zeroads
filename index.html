@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZeroAds - Bypass</title>
+<style>
+body{background:#0a0a0a;color:white;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.box{max-width:500px;width:100%;background:#111;padding:30px;border-radius:20px;border:1px solid #222;text-align:center}
+input{width:100%;padding:14px;border-radius:50px;border:1px solid #333;background:#222;color:white;margin:15px 0;box-sizing:border-box}
+button{width:100%;padding:14px;border-radius:50px;border:none;background:white;color:black;font-weight:700;cursor:pointer}
+#status{margin-top:15px;font-size:13px;color:#888}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>ZeroAds</h1>
+<p>Bypass Semua Short Link</p>
+<input id="url" placeholder="https://sfl.gl/xxxxx">
+<button onclick="go()">Bypass & Download</button>
+<div id="status"></div>
+</div>
+<script>
+async function go(){
+  let u = document.getElementById('url').value.trim();
+  if(!u) return;
+  document.getElementById('status').innerText = "Memproses bypass... (Tahap 1-4)";
+  let slug = u.split('/').pop();
+  let res = await fetch('/bypass?slug=' + slug);
+  let data = await res.json();
+  if(data.url){
+    document.getElementById('status').innerText = "Tembus! Mengalihkan ke download...";
+    window.location.href = data.url;
+  } else {
+    document.getElementById('status').innerText = "Gagal: " + data.error;
+  }
+}
+</script>
+</body>
+</html>
