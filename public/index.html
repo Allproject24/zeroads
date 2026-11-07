@@ -1,39 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ZeroAds - Bypass</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZeroAds Downloader</title>
 <style>
-body{background:#0a0a0a;color:white;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-.box{max-width:500px;width:100%;background:#111;padding:30px;border-radius:20px;border:1px solid #222;text-align:center}
-input{width:100%;padding:14px;border-radius:50px;border:1px solid #333;background:#222;color:white;margin:15px 0;box-sizing:border-box}
-button{width:100%;padding:14px;border-radius:50px;border:none;background:white;color:black;font-weight:700;cursor:pointer}
-#status{margin-top:15px;font-size:13px;color:#888}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{background:#000;color:#fff;min-height:100vh;display:flex;justify-content:center;padding:16px 12px 40px}
+.card{width:100%;max-width:480px;background:#0f0f0f;border:1px solid #222;border-radius:28px;padding:28px 20px 22px}
+h1{text-align:center;font-size:28px;letter-spacing:-.5px}
+.sub{text-align:center;color:#888;font-size:11px;letter-spacing:3px;margin:8px 0 6px}
+.desc{text-align:center;color:#777;font-size:12px;line-height:1.5;margin-bottom:20px}
+.desc b{color:#aaa}
+.input-wrap{position:relative;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:999px;display:flex;align-items:center;padding:0 6px 0 16px;height:54px}
+.input-wrap span{opacity:.6}
+.input-wrap input{flex:1;background:transparent;border:0;outline:0;color:#fff;font-size:14px;padding:0 8px;min-width:0}
+.clear{width:32px;height:32px;border-radius:50%;background:#2a2a2a;border:0;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0}
+button.bypass{width:100%;height:54px;border:0;border-radius:999px;background:#f5f5f5;color:#111;font-weight:700;font-size:16px;margin:14px 0 12px;cursor:pointer}
+button.bypass:disabled{opacity:.6}
+.log{display:flex;justify-content:space-between;align-items:center;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;padding:12px 14px;font-size:13px;color:#ccc;cursor:pointer}
+.log small{color:#666}
+.result{display:none;background:#141414;border:1px solid #2a2a2a;border-radius:20px;padding:16px;margin-top:14px}
+.result.show{display:block}
+.label{text-align:center;color:#888;font-size:11px;letter-spacing:3px;margin-bottom:12px}
+.link-box{background:#0a0a0a;border-radius:12px;padding:14px;word-break:break-all;color:#7ee787;font-size:14px;line-height:1.5;min-height:54px}
+.row{display:flex;gap:10px;margin-top:14px}
+.row button{flex:1;height:44px;border-radius:12px;background:#222;border:1px solid #333;color:#fff;font-size:13px;cursor:pointer}
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
+.badges span{background:#1a1a1a;border:1px solid #2a2a2a;padding:8px 14px;border-radius:999px;font-size:12px;color:#999}
+footer{text-align:center;color:#666;font-size:12px;margin-top:20px}
+#status{font-size:12px;color:#888;text-align:center;min-height:16px}
+#logDetail{display:none;background:#0a0a0a;border-radius:10px;padding:10px;margin-top:10px;font-size:11px;color:#888;white-space:pre-wrap;max-height:160px;overflow:auto}
 </style>
 </head>
 <body>
-<div class="box">
-<h1>ZeroAds</h1>
-<p>Bypass Semua Short Link</p>
-<input id="url" placeholder="https://sfl.gl/xxxxx">
-<button onclick="go()">Bypass & Download</button>
+<div class="card">
+<h1>ZeroAds Downloader</h1>
+<div class="sub">BYPASS SEMUA SHORT LINK</div>
+<p class="desc">Bypass <b>sfl.gl</b> · <b>sfile.co</b> · <b>sfile.mobi</b> · <b>SafelinkU</b> · <b>Safefileku</b>, dan lain-lain.</p>
+
+<div class="input-wrap"><span>🔗</span><input id="url" placeholder="https://sfl.gl/ZtniJak" value="https://sfl.gl/ZtniJak"><button class="clear" onclick="document.getElementById('url').value=''">×</button></div>
+<button class="bypass" id="btn" onclick="go()">Bypass</button>
 <div id="status"></div>
+
+<div class="log" onclick="document.getElementById('logDetail').style.display=document.getElementById('logDetail').style.display=='block'?'none':'block'">
+<span>Log proses (sementara)</span><small id="logCount">0 baris</small>
+</div>
+<div id="logDetail"></div>
+
+<div class="result" id="result">
+<div class="label">LINK ASLI</div>
+<div class="link-box" id="out">-</div>
+<div class="row">
+<button onclick="copy()">📋 Salin URL</button>
+<button onclick="openLink()">Buka Link ↗</button>
+</div>
+</div>
+
+<div class="badges">
+<span>● Bypass Iklan</span><span>● Bebas Shortlink</span>
+<span>● Cepat & Mudah</span><span>● Support All Device</span>
+</div>
+<footer>© 2026 ZeroAds Downloader</footer>
 </div>
 <script>
+let finalUrl="";
+let logs=[];
+function addLog(s){logs.push(s);document.getElementById('logCount').textContent=logs.length+" baris";document.getElementById('logDetail').textContent=logs.join("\n");}
 async function go(){
-  let u = document.getElementById('url').value.trim();
-  if(!u) return;
-  document.getElementById('status').innerText = "Memproses bypass... (Tahap 1-4)";
-  let slug = u.split('/').pop();
-  let res = await fetch('/bypass?slug=' + slug);
-  let data = await res.json();
-  if(data.url){
-    document.getElementById('status').innerText = "Tembus! Mengalihkan ke download...";
-    window.location.href = data.url;
-  } else {
-    document.getElementById('status').innerText = "Gagal: " + data.error;
-  }
+  const u=document.getElementById('url').value.trim();
+  if(!u) return alert('Tempel link dulu bro!');
+  const btn=document.getElementById('btn'); btn.disabled=true; btn.textContent='Memproses...';
+  document.getElementById('status').textContent='Tembus! Mengalihkan ke download...';
+  logs=[]; addLog('> Mulai bypass: '+u);
+  try{
+    addLog('> Menghubungi server...');
+    const r=await fetch('/bypass?url='+encodeURIComponent(u));
+    addLog('> Status: '+r.status);
+    const d=await r.json();
+    if(d.error) throw new Error(d.error);
+    finalUrl=d.url||d.result||d.data;
+    if(!finalUrl) throw new Error('URL kosong dari server');
+    addLog('> Berhasil! Link asli ditemukan');
+    document.getElementById('out').textContent=finalUrl;
+    document.getElementById('result').classList.add('show');
+    document.getElementById('status').textContent='Berhasil! Link asli di bawah 👇';
+  }catch(e){ addLog('> Error: '+e.message); document.getElementById('status').textContent='Gagal: '+e.message; }
+  btn.disabled=false; btn.textContent='Bypass';
 }
+function copy(){ if(!finalUrl) return; navigator.clipboard.writeText(finalUrl).then(()=>alert('Tersalin!')); }
+function openLink(){ if(finalUrl) window.open(finalUrl,'_blank'); }
 </script>
 </body>
 </html>
