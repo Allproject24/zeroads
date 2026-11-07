@@ -13,11 +13,13 @@ userAgent = (
     "(KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"
 )
 
-app = Flask(__name__, static_folder='.', static_url_path='')
+app = Flask(__name__)
 
 @app.get("/")
 def home():
-    return app.send_static_file("index.html")
+    here = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(here, "index.html"), "r", encoding="utf-8") as f:
+        return f.read(), 200, {"Content-Type": "text/html; charset=utf-8"}
 
 
 def getXsrf(session, domain):
