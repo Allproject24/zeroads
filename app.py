@@ -140,6 +140,7 @@ def resolve(slug):
     raise ValueError("destination not found after 3 tries")
 
 @app.get("/bypass")
+@app.get("/api/index")
 def resolveEndpoint():
     slug = request.args.get("slug")
     if not slug:
