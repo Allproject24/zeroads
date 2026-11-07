@@ -17,6 +17,10 @@ app = Flask(__name__)
 
 @app.get("/")
 def home():
+    # Vercel rewrite /bypass -> /api/index bikin path jadi "/"
+    # Jadi kalo ada ?url= / ?slug=, anggap ini request bypass
+    if request.args.get("url") or request.args.get("slug"):
+        return resolveEndpoint()
     here = os.path.dirname(os.path.abspath(__file__))
     with open(os.path.join(here, "index.html"), "r", encoding="utf-8") as f:
         return f.read(), 200, {"Content-Type": "text/html; charset=utf-8"}
